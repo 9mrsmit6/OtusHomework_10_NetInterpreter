@@ -1,0 +1,2 @@
+# OtusHomework_10_NetInterpreter
+Самостоятельная работа 10
