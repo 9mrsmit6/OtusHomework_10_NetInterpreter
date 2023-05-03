@@ -17,6 +17,8 @@ namespace Parsing
             analyzer{blockSize}
         {}
 
+        bool isBusy(){return analyzer.isBusy();}
+
         void parse(const std::string& work)
         {
             std::istringstream stream(work);

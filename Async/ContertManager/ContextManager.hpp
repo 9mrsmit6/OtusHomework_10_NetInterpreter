@@ -1,59 +1,70 @@
 #ifndef CONTEXTMANAGER_HPP
 #define CONTEXTMANAGER_HPP
 
-#include <shared_mutex>
-#include <mutex>
+
+#include "../Parsing/Parser.hpp"
+#include "../Analize/Analizer.hpp"
+#include <memory>
 #include <unordered_map>
+#include <string>
 
+using CurParser= Parsing::Parser<Analize::Analizer>;
 
-//map для контекстов с блокирвкой на случай работы с одним контекстом из разных потоков
-template<class Processor>
-struct ContextManger
+struct ConnectionManager
 {
+    ConnectionManager(const std::size_t stblockSize_):
+        stblockSize{stblockSize_},
+        commonParser{std::make_shared<CurParser>(stblockSize)}
+    {
 
-        static ContextManger& getInstance()
-        {
-            static ContextManger instance;
-            return instance;
-        }
+    }
 
-        std::size_t createNewContext(std::size_t bs)
+    void execute(std::string ip, std::string work)
+    {
+        if(!executeBusy(ip, work))
         {
-            std::unique_lock<std::shared_mutex> lock(contextStorageMutex);
-            auto ret=currentID;
-            contextStorage.insert(std::make_pair(currentID, bs ));
-            currentID++;
-            return ret;
+            commonParser->parse(work);
+            if(commonParser->isBusy())
+            {
+                busyParsers[ip]=std::move(commonParser);
+                commonParser=std::make_shared<CurParser>(stblockSize);
+            }
         }
-
-        void eraseContext(std::size_t contextID)
-        {
-            std::unique_lock<std::shared_mutex> lock(contextStorageMutex);
-            contextStorage.at(contextID).eof();
-            contextStorage.erase(contextID);
-        }
-
-        auto& getContext(std::size_t contextID)
-        {
-           std::shared_lock<std::shared_mutex> lock(contextStorageMutex);
-           return contextStorage.at(contextID);
-        }
+    }
 
     private:
-        std::shared_mutex contextStorageMutex;
-        std::unordered_map<std::size_t, Processor> contextStorage{};
+        const std::size_t stblockSize{3};
 
-        std::size_t currentID{0};
+        std::shared_ptr<CurParser> commonParser;
+        std::unordered_map<std::string, std::shared_ptr<CurParser> > busyParsers;
 
-        ContextManger() = default;
+        bool executeBusy(std::string ip, std::string work)
+        {
+            try
+            {
+                auto& parser=busyParsers.at(ip);
+                parser->parse(work);
+                if(parser->isBusy())
+                {
+                    return true;
+                }
+                else
+                {
+                    busyParsers.erase(ip);
+                    return true;
+                }
+            }
+            catch(...)
+            {
+                return false;
+            }
 
-        ContextManger(const ContextManger& root) = delete;
-        ContextManger& operator=(const ContextManger&) = delete;
-        ContextManger(ContextManger&& root) = delete;
-        ContextManger& operator=(ContextManger&&) = delete;
+        }
 
-        ~ContextManger() = default;
+
 
 };
+
+
 
 #endif // CONTEXTMANAGER_HPP

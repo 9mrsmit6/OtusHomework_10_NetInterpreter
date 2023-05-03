@@ -57,6 +57,11 @@ namespace Analize
             }
         }
 
+        bool isBusy()
+        {
+            return (currentState==BlockAnalizeStates::DynamicBloc);
+        }
+
 
     private:
         std::unique_ptr<Data::Block> block;
