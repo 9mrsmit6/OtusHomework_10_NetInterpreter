@@ -10,6 +10,7 @@
 
 using CurParser= Parsing::Parser<Analize::Analizer>;
 
+
 struct ConnectionManager
 {
     ConnectionManager(const std::size_t stblockSize_):
@@ -19,7 +20,7 @@ struct ConnectionManager
 
     }
 
-    void execute(std::string ip, std::string work)
+    void execute(const std::string& ip, std::istream& work)
     {
         if(!executeBusy(ip, work))
         {
@@ -32,13 +33,27 @@ struct ConnectionManager
         }
     }
 
+//    ~ConnectionManager()
+//    {
+//        for(auto& a:busyParsers)
+//        {
+//            a.second->eof();
+//        }
+//        commonParser->eof();
+
+//    }
+
     private:
+
+
+
+
         const std::size_t stblockSize{3};
 
         std::shared_ptr<CurParser> commonParser;
         std::unordered_map<std::string, std::shared_ptr<CurParser> > busyParsers;
 
-        bool executeBusy(std::string ip, std::string work)
+        bool executeBusy(const std::string& ip, std::istream& work)
         {
             try
             {
@@ -60,8 +75,6 @@ struct ConnectionManager
             }
 
         }
-
-
 
 };
 

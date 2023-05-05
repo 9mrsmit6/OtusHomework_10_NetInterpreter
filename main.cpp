@@ -2,6 +2,9 @@
 #include <boost/asio.hpp>
 #include <string>
 
+#include "Async/ContertManager/ContextManager.hpp"
+#include "Net/Server.hpp"
+
 
 //boost::asio::ip::tcp::socket* sockPtr;
 //std::string str{"                              "};
@@ -43,7 +46,17 @@
 int main()
 {
 
-//    boost::asio::io_context io_context;
+
+//    Async::receive("1", "1\n2\n");
+//    Async::receive("2", "{\n1\n2\n");
+
+//    Async::receive("3", "4\n5\n6\n");
+//    Async::receive("4", "4\n5\n6\n");
+//    Async::receive("2", "}");
+
+    boost::asio::io_context io_context;
+    Net::Server server(io_context, 9000);
+    io_context.run();
 
 //    boost::asio::ip::tcp::acceptor ac{io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 9000)};
 //    boost::asio::ip::tcp::socket socket{io_context};

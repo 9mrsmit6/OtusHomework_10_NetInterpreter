@@ -10,9 +10,11 @@ find_package( Threads )
 
 include_directories(${Boost_INCLUDE_DIR})
 
-add_library(Async SHARED
-    Async/async.h
-    Async/async.cpp
+
+add_executable(OtusHomework_10_NetInterpreter
+    Net/Connection.hpp
+    Net/Server.hpp
+
     Async/ContertManager/ContextManager.hpp
 
     Async/Analize/Analizer.cpp
@@ -23,13 +25,10 @@ add_library(Async SHARED
     Async/Listeners/Printer.hpp
     Async/Listeners/FilePrinter.hpp
     Async/CommandProcessor/CommandProcessor.hpp
-)
 
-add_executable(OtusHomework_10_NetInterpreter main.cpp)
+    main.cpp)
 
-target_link_libraries( Async ${CMAKE_THREAD_LIBS_INIT} )
-target_link_libraries(OtusHomework_10_NetInterpreter Async)
-
+target_link_libraries(OtusHomework_10_NetInterpreter ${CMAKE_THREAD_LIBS_INIT} )
 
 
 install(TARGETS OtusHomework_10_NetInterpreter

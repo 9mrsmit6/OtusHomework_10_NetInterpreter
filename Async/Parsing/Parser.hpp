@@ -19,9 +19,9 @@ namespace Parsing
 
         bool isBusy(){return analyzer.isBusy();}
 
-        void parse(const std::string& work)
+        void parse(std::istream& stream)
         {
-            std::istringstream stream(work);
+           // std::istringstream stream(work);
             while(true)
             {
                 if(stream.eof())
