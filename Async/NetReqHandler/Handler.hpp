@@ -11,9 +11,9 @@
 using CurParser= Parsing::Parser<Analize::Analizer>;
 
 
-struct ConnectionManager
+struct Handler
 {
-    ConnectionManager(const std::size_t stblockSize_):
+    Handler(const std::size_t stblockSize_):
         stblockSize{stblockSize_},
         commonParser{std::make_shared<CurParser>(stblockSize)}
     {

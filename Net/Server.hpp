@@ -1,7 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 #include "Connection.hpp"
-#include "../Async/ContertManager/ContextManager.hpp"
+#include "../Async/NetReqHandler/Handler.hpp"
 
 namespace Net
 {
@@ -9,8 +9,9 @@ namespace Net
 
     struct Server
     {
-        Server(boost::asio::io_context& io_context, short port):
-            acceptor_(io_context, ba::endpoint(ba::v4(), port))
+        Server(boost::asio::io_context& io_context, unsigned short port, const std::size_t bs):
+            acceptor_(io_context, ba::endpoint(ba::v4(), port)),
+            handler{bs}
         {
             accept();
         }
@@ -18,7 +19,7 @@ namespace Net
         private:
             ba::acceptor acceptor_;
             const boost::asio::socket_base::keep_alive kaOpt{true};
-            ConnectionManager man{3};
+            Handler handler;
 
             void accept()
             {
@@ -27,7 +28,7 @@ namespace Net
                         {
                           if (!ec)
                           {
-                            std::make_shared<Connection<ConnectionManager>>(socket, man)->read();
+                            std::make_shared<Connection<Handler>>(socket, handler)->read();
                           }
 
                           accept();

@@ -5,7 +5,7 @@ project(OtusHomework_10_NetInterpreter LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Boost COMPONENTS system REQUIRED)
+find_package(Boost COMPONENTS system program_options REQUIRED)
 find_package( Threads )
 
 include_directories(${Boost_INCLUDE_DIR})
@@ -15,7 +15,7 @@ add_executable(OtusHomework_10_NetInterpreter
     Net/Connection.hpp
     Net/Server.hpp
 
-    Async/ContertManager/ContextManager.hpp
+    Async/NetReqHandler/Handler.hpp
 
     Async/Analize/Analizer.cpp
     Async/Parsing/Parser.hpp
@@ -26,9 +26,12 @@ add_executable(OtusHomework_10_NetInterpreter
     Async/Listeners/FilePrinter.hpp
     Async/CommandProcessor/CommandProcessor.hpp
 
+    Options/Options.hpp
+
     main.cpp)
 
 target_link_libraries(OtusHomework_10_NetInterpreter ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries(OtusHomework_10_NetInterpreter   ${Boost_LIBRARIES}    )
 
 
 install(TARGETS OtusHomework_10_NetInterpreter
