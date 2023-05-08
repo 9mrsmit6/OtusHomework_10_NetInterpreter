@@ -17,7 +17,7 @@ namespace Parsing
             analyzer{blockSize}
         {}
 
-        bool isBusy(){return analyzer.isBusy();}
+        bool isBusy(){return analyzer.isBusy();}  //Добавил флаг занятости если обрабатывается дин. блок
 
         void parse(std::istream& stream)
         {

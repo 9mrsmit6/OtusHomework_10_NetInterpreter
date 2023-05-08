@@ -17,9 +17,11 @@ int main(int argc, const char *argv[])
         return -1;
     }
 
-
+    //Создаем контекст
     boost::asio::io_context io_context;
+    //Создаем сервер
     Net::Server server(io_context, rawOptions->port, rawOptions->sBlockSize);
+    //Запускаем контекст на выполнение
     io_context.run();
 
     return 0;

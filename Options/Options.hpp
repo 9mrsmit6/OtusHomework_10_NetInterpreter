@@ -7,6 +7,7 @@
 
 #include <optional>
 
+//Опции как в работе 8
 namespace Options
 {
 
@@ -16,9 +17,6 @@ namespace Options
         unsigned short port{9000};
         std::size_t sBlockSize{3};
     };
-
-    int hashNumber{0};
-
 
 
     //Парсим опции

@@ -3,34 +3,39 @@
 #include "Connection.hpp"
 #include "../Async/NetReqHandler/Handler.hpp"
 
+//Сервер крайне похожий на примеры из вебинара и examples от boost::asio
 namespace Net
 {
     using ba=boost::asio::ip::tcp;
 
     struct Server
     {
-        Server(boost::asio::io_context& io_context, unsigned short port, const std::size_t bs):
-            acceptor_(io_context, ba::endpoint(ba::v4(), port)),
-            handler{bs}
+        Server(boost::asio::io_context& io_context_, unsigned short port, const std::size_t bs):
+            acceptor_(io_context_, ba::endpoint(ba::v4(), port)),
+            handler{bs},
+            io_context{io_context_}
         {
             accept();
         }
 
+        ~Server()=default;
+
         private:
             ba::acceptor acceptor_;
-            const boost::asio::socket_base::keep_alive kaOpt{true};
             Handler handler;
+            boost::asio::io_context& io_context;
 
             void accept()
             {
+                //Прослушиваем и создаем соединение с обработчиком запросов. Обработчик из предыдущей самостоятельной
                 acceptor_.async_accept(
                         [this](boost::system::error_code ec, ba::socket socket)
                         {
                           if (!ec)
                           {
+                            socket.set_option(boost::asio::socket_base::keep_alive{true});
                             std::make_shared<Connection<Handler>>(socket, handler)->read();
                           }
-
                           accept();
                         });
             }

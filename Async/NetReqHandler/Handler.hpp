@@ -10,6 +10,9 @@
 
 using CurParser= Parsing::Parser<Analize::Analizer>;
 
+//Модифицтрованный обработчик комманд.
+//Есть основной парсер и map с обработчиками динамических блоков. Где в качестве ключа строка ip адреса инициатора.
+//Если основной парсер ловит динамический блок то он помещаетя в коллекцию а на его место создается новый.
 
 struct Handler
 {
@@ -22,10 +25,10 @@ struct Handler
 
     void execute(const std::string& ip, std::istream& work)
     {
-        if(!executeBusy(ip, work))
+        if(!executeBusy(ip, work))  //Сначала динамические блоки
         {
-            commonParser->parse(work);
-            if(commonParser->isBusy())
+            commonParser->parse(work);  //Потом статические
+            if(commonParser->isBusy())  //Если попался динамический и парсер теперь занят
             {
                 busyParsers[ip]=std::move(commonParser);
                 commonParser=std::make_shared<CurParser>(stblockSize);
@@ -45,9 +48,6 @@ struct Handler
 
     private:
 
-
-
-
         const std::size_t stblockSize{3};
 
         std::shared_ptr<CurParser> commonParser;
@@ -55,8 +55,10 @@ struct Handler
 
         bool executeBusy(const std::string& ip, std::istream& work)
         {
+            //Обработка динамических блоков
             try
             {
+                //Ищем блок в коллекции и обрабатываем
                 auto& parser=busyParsers.at(ip);
                 parser->parse(work);
                 if(parser->isBusy())
@@ -65,7 +67,7 @@ struct Handler
                 }
                 else
                 {
-                    busyParsers.erase(ip);
+                    busyParsers.erase(ip); //Если он закончил то удаляем его
                     return true;
                 }
             }
